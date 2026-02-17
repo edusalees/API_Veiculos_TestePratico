@@ -1,6 +1,11 @@
 using API_Veiculos.DB_Connection;
 using API_Veiculos.Domain.Entity;
+using API_Veiculos.Infra;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using System.Text.Json;
+using System.Text.Json.Serialization;
+
 
 namespace API_Veiculos.Controllers
 {
@@ -8,21 +13,15 @@ namespace API_Veiculos.Controllers
     [Route("[controller]")]
     public class VeiculosController : ControllerBase
     {
-        private readonly ILogger<VeiculosController> _logger;
 
-        public VeiculosController(ILogger<VeiculosController> logger)
-        {
-            _logger = logger;
-        }
-
-        
         [HttpPost]
         [Route("CadastrarVeiculo/")]
         public async Task<IActionResult> CadastrarVeiculo(Veiculo veiculo)
         {
             try
-            {
+            {               
                 new ConexaoDB().CadastrarVeiculoDB(veiculo);
+
             }
             catch (Exception ex) 
             {
@@ -66,46 +65,37 @@ namespace API_Veiculos.Controllers
 
         [HttpGet]
         [Route("ListarTodosRegistrosVeiculos/")]
-        public void ListarTodosRegistrosVeiculos()
+        public string ListarTodosRegistrosVeiculos()
         {
             try
             {
                 List<Veiculo> veiculos = new ConexaoDB().ListarVeiculos();
+
+                var json = JsonSerializer.Serialize(veiculos);
+
+                return json.ToString();
                 
-                if (veiculos.Any())
-                {
-                    Ok(veiculos);
-                }
             }
             catch(Exception ex)
             {
-                BadRequest(ex.Message);
+                throw ex;
             }
         }
 
         [HttpGet]
         [Route("ListarVeiculoPorId/")]
-        public void ListarVeiculoPorId(long idVeiculo)
+        public Veiculo ListarVeiculoPorId(long idVeiculo)
         {
             try
             {
-                Veiculo veiculos = new ConexaoDB().ListarVeiculoPorId(idVeiculo);
+                Veiculo veiculo = new ConexaoDB().ListarVeiculoPorId(idVeiculo);
 
-                if (veiculos != null)
-                {
-                    Ok(veiculos);
-                }
+                return veiculo;
             }
             catch (Exception ex)
             {
-                BadRequest(ex.Message);
+                throw ex;
             }
-        }
-
-
-
-
-
-
+        }     
     }
 }
