@@ -9,15 +9,15 @@ using API_Veiculos.Infra;
 
 namespace API_Veiculos.DB_Connection
 {
-    public class ConexaoDB
+    public class DbExecution
     {
         SettingsManager settingsManager = new SettingsManager();       
 
-        public void CadastrarVeiculoDB(Veiculo veiculo)
+        public void RegisterVehicle(Vehicle veiculo)
         {
             if (!settingsManager.GetUseSqlServerConfig())
             {
-                using (var context = new VeiculoContext())
+                using (var context = new VehicleContext())
                 {
                     context.Add(veiculo);
 
@@ -31,7 +31,7 @@ namespace API_Veiculos.DB_Connection
                 try
                 {
                     SqlConnection connection = new SqlConnection(connectionString);
-                    String sqlScript = "InsertVeiculo";
+                    string sqlScript = "InsertVeiculo";
                     connection.Open();
                     SqlCommand sqlCommand = new SqlCommand(sqlScript, connection);
                     sqlCommand.CommandType = CommandType.StoredProcedure;
@@ -51,11 +51,11 @@ namespace API_Veiculos.DB_Connection
             }
         }
 
-        public void ExcluirRegistroVeiculo(long idVeiculo)
+        public void DeleteRecordVehicle(long idVeiculo)
         {
             if (!settingsManager.GetUseSqlServerConfig())
             {
-                using( var context = new VeiculoContext())
+                using( var context = new VehicleContext())
                 {
                     var veiculo = context.Veiculos.Single(v => v.Id == idVeiculo);
 
@@ -79,13 +79,13 @@ namespace API_Veiculos.DB_Connection
             }            
         }
 
-        public void EditarRegistroVeiculo(Veiculo veiculo)
+        public void UpdateRecordVehicle(Vehicle veiculo)
         {
             try
             {
                 if (!settingsManager.GetUseSqlServerConfig())
                 {
-                    using (var context = new VeiculoContext())
+                    using (var context = new VehicleContext())
                     {
                         var veiculoBusca = context.Veiculos.Single(v => v.Id == veiculo.Id);
 
@@ -126,13 +126,13 @@ namespace API_Veiculos.DB_Connection
             }            
         }
 
-        public List<Veiculo> ListarVeiculos()
+        public List<Vehicle> ListarVeiculos()
         {
-            List<Veiculo> listaVeiculos = new List<Veiculo>();
+            List<Vehicle> listaVeiculos = new List<Vehicle>();
 
             if (!settingsManager.GetUseSqlServerConfig())
             {
-                using (var context = new VeiculoContext())
+                using (var context = new VehicleContext())
                 {
                     var veiculos = context.Veiculos.ToList();
 
@@ -156,7 +156,7 @@ namespace API_Veiculos.DB_Connection
 
                 while (reader.Read())
                 {
-                    Veiculo veiculo = new Veiculo()
+                    Vehicle veiculo = new Vehicle()
                     {
                         Id = reader.GetInt64(0),
                         DescVeiculo = reader.GetString(1),
@@ -173,15 +173,15 @@ namespace API_Veiculos.DB_Connection
             return listaVeiculos;
         }
 
-        public Veiculo ListarVeiculoPorId(long idVeiculo)
+        public Vehicle ListarVeiculoPorId(long idVeiculo)
         {
-            Veiculo veiculo = new Veiculo();
+            Vehicle veiculo = new Vehicle();
 
             if (!settingsManager.GetUseSqlServerConfig())
             {
-                using (var context = new VeiculoContext())
+                using (var context = new VehicleContext())
                 {
-                    Veiculo veiculoBusca = context.Veiculos.Single(v => v.Id == idVeiculo);
+                    Vehicle veiculoBusca = context.Veiculos.Single(v => v.Id == idVeiculo);
 
                     if (veiculoBusca != null)
                     {
@@ -204,7 +204,7 @@ namespace API_Veiculos.DB_Connection
 
                 if (reader.Read())
                 {
-                    veiculo = new Veiculo()
+                    veiculo = new Vehicle()
                     {
                         Id = reader.GetInt64(0),
                         DescVeiculo = reader.GetString(1),

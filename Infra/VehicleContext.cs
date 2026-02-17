@@ -3,13 +3,13 @@ using Microsoft.EntityFrameworkCore;
 
 namespace API_Veiculos.Infra
 {
-    public class VeiculoContext : DbContext
+    public class VehicleContext : DbContext
     {
-        public DbSet<Veiculo> Veiculos { get; set; }
+        public DbSet<Vehicle> Veiculos { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Veiculo>();
+            modelBuilder.Entity<Vehicle>();
         }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
