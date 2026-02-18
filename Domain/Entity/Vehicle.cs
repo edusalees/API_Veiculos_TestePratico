@@ -9,7 +9,7 @@ namespace API_Veiculos.Domain.Entity
         public MarcaVeiculo MarcaVeiculo { get; set; }
         public string ModeloVeiculo { get; set; }
         public string OpcionaisVeiculo { get; set; }
-        public decimal ValorVeiculo { get; set; }
+        public string ValorVeiculo { get; set; }
         public DateTime DataRegistro { get; set; }
     }
 }

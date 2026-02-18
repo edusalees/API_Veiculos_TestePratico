@@ -4,7 +4,9 @@ using API_Veiculos.Domain.Validation;
 using API_Veiculos.Infra;
 using FluentValidation.Results;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.EntityFrameworkCore;
+using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
@@ -15,10 +17,9 @@ namespace API_Veiculos.Controllers
     [Route("[controller]")]
     public class VehicleController : ControllerBase
     {
-
         [HttpPost]
         [Route("RegisterVehicle/")]
-        public async Task<IActionResult> RegisterVehicle(Vehicle vehicle)
+        public IActionResult RegisterVehicle(Vehicle vehicle)
         {
             VehicleValidator validator = new VehicleValidator();
             ValidationResult validationResult = validator.Validate(vehicle);
@@ -28,6 +29,12 @@ namespace API_Veiculos.Controllers
                 try
                 {
                     new DbExecution().RegisterVehicle(vehicle);
+
+                    return Ok(new
+                    {
+                        StatusCode = StatusCodes.Status200OK,
+                        Message = String.Format("Veículo Registrado com sucesso, Identificador: {0}", vehicle.Id)
+                    });
                 }
                 catch (Exception ex)
                 {
@@ -37,19 +44,15 @@ namespace API_Veiculos.Controllers
             else
             {
                 return BadRequest(new
-                {                    
+                {
                     Error = validationResult.Errors
                 });
-            }
-            
-
-
-            return Ok();
+            } 
         }
 
         [HttpPost]
         [Route("UpdateRecordVehicle/")]
-        public async Task<IActionResult> UpdateRecordVehicle(Vehicle vehicle)
+        public IActionResult UpdateRecordVehicle(Vehicle vehicle)
         {
             VehicleValidator validator = new VehicleValidator();
             ValidationResult validationResult = validator.Validate(vehicle);
@@ -57,12 +60,19 @@ namespace API_Veiculos.Controllers
             {
                 try
                 {
-                    new DbExecution().UpdateRecordVehicle(vehicle);
+                    new DbExecution().UpdateRecordVehicle(vehicle);                  
                 }
                 catch (Exception ex)
                 {
                     BadRequest(ex);
                 }
+
+                return Ok(new
+                {
+                    StatusCode = StatusCodes.Status200OK,
+                    Message = "Dados Atualizados com Sucesso",
+                    Vehicle = vehicle
+                });
             }
             else
             {
@@ -71,59 +81,84 @@ namespace API_Veiculos.Controllers
                     Error = validationResult.Errors
                 });
             }
-
-            return NoContent();
         }
 
         [HttpPost]
         [Route("DeleteRecordVehicle/")]
-        public async Task<IActionResult> DeleteRecordVehicle(long idVeiculo)
+        public IActionResult DeleteRecordVehicle(long idVeiculo)
         {
             try
             {
-                new DbExecution().DeleteRecordVehicle(idVeiculo);
+                new DbExecution().DeleteRecordVehicle(idVeiculo);                
             }
             catch (Exception ex)
             {
                 BadRequest(ex);
             }
 
-            return NoContent();
+            return Ok(new
+            {
+                StatusCode = StatusCodes.Status200OK,
+                Message = "Registro deletado com sucesso"
+            });
         }
 
         [HttpGet]
-        [Route("ListarTodosRegistrosVeiculos/")]
-        public string ListarTodosRegistrosVeiculos()
+        [Route("GetAllVehicles/")]
+        public IActionResult GetAllVehicles()
         {
             try
             {
-                List<Vehicle> vehicles = new DbExecution().ListarVeiculos();
+                List<Vehicle> vehicles = new DbExecution().GetAllVehicles();
 
-                var json = JsonSerializer.Serialize(vehicles);
+                if (!vehicles.Any())
+                {
+                    return Ok(new
+                    {
+                        StatusCode = StatusCodes.Status200OK,
+                        Message = "Não há registros na Base de Dados"
+                    });
+                }
 
-                return json.ToString();
-                
+                return Ok(new
+                {
+                    StatusCode = StatusCodes.Status200OK,
+                    Vehicles = vehicles
+                });
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
-                throw ex;
+                return BadRequest(ex);
             }
         }
 
         [HttpGet]
-        [Route("ListarVeiculoPorId/")]
-        public Vehicle ListarVeiculoPorId(long idVeiculo)
+        [Route("GetVehicleById/")]
+        public IActionResult GetVehicleById(long idVeiculo)
         {
             try
             {
-                Vehicle vehicle = new DbExecution().ListarVeiculoPorId(idVeiculo);
+                Vehicle vehicle = new DbExecution().GetVehicleById(idVeiculo);
 
-                return vehicle;
+                if(vehicle == null)
+                {
+                    return Ok(new
+                    {
+                        StatusCode = StatusCodes.Status200OK,
+                        Message = "Não há registro com este Identificador"
+                    });
+                }
+
+                return Ok(new 
+                {
+                    StatusCode = StatusCodes.Status200OK,
+                    Vehicles = vehicle
+                });
             }
             catch (Exception ex)
             {
                 throw ex;
             }
-        }     
+        }
     }
 }

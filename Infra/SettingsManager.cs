@@ -25,11 +25,11 @@ namespace API_Veiculos.Infra
             return connectionString;
         }
 
-        public bool GetUseSqlServerConfig()
+        public bool GetUseDatabaseConfig()
         {
             IConfigurationRoot configuration = GetConfiguration();
 
-            bool connectionString = configuration.GetValue<bool>("UseSqlServer");
+            bool connectionString = configuration.GetValue<bool>("UseDatabase");
 
             return connectionString;
         }

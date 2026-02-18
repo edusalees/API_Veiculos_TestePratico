@@ -15,7 +15,7 @@ namespace API_Veiculos.DB_Connection
 
         public void RegisterVehicle(Vehicle veiculo)
         {
-            if (!settingsManager.GetUseSqlServerConfig())
+            if (!settingsManager.GetUseDatabaseConfig())
             {
                 using (var context = new VehicleContext())
                 {
@@ -53,7 +53,7 @@ namespace API_Veiculos.DB_Connection
 
         public void DeleteRecordVehicle(long idVeiculo)
         {
-            if (!settingsManager.GetUseSqlServerConfig())
+            if (!settingsManager.GetUseDatabaseConfig())
             {
                 using( var context = new VehicleContext())
                 {
@@ -83,7 +83,7 @@ namespace API_Veiculos.DB_Connection
         {
             try
             {
-                if (!settingsManager.GetUseSqlServerConfig())
+                if (!settingsManager.GetUseDatabaseConfig())
                 {
                     using (var context = new VehicleContext())
                     {
@@ -126,11 +126,11 @@ namespace API_Veiculos.DB_Connection
             }            
         }
 
-        public List<Vehicle> ListarVeiculos()
+        public List<Vehicle> GetAllVehicles()
         {
             List<Vehicle> listaVeiculos = new List<Vehicle>();
 
-            if (!settingsManager.GetUseSqlServerConfig())
+            if (!settingsManager.GetUseDatabaseConfig())
             {
                 using (var context = new VehicleContext())
                 {
@@ -163,7 +163,7 @@ namespace API_Veiculos.DB_Connection
                         MarcaVeiculo = (MarcaVeiculo)reader.GetByte(2),
                         ModeloVeiculo = reader.GetString(3),
                         OpcionaisVeiculo = reader.GetString(4),
-                        ValorVeiculo = reader.GetDecimal(5),
+                        ValorVeiculo = reader.GetString(5),
                         DataRegistro = reader.GetDateTime(6)
                     };
                     listaVeiculos.Add(veiculo);
@@ -173,11 +173,11 @@ namespace API_Veiculos.DB_Connection
             return listaVeiculos;
         }
 
-        public Vehicle ListarVeiculoPorId(long idVeiculo)
+        public Vehicle GetVehicleById(long idVeiculo)
         {
             Vehicle veiculo = new Vehicle();
 
-            if (!settingsManager.GetUseSqlServerConfig())
+            if (!settingsManager.GetUseDatabaseConfig())
             {
                 using (var context = new VehicleContext())
                 {
@@ -211,7 +211,7 @@ namespace API_Veiculos.DB_Connection
                         MarcaVeiculo = (MarcaVeiculo)reader.GetByte(2),
                         ModeloVeiculo = reader.GetString(3),
                         OpcionaisVeiculo = reader.GetString(4),
-                        ValorVeiculo = reader.GetDecimal(5),
+                        ValorVeiculo = reader.GetString(5),
                         DataRegistro = reader.GetDateTime(6)
                     };
                 }
